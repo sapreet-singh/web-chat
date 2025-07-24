@@ -13,6 +13,7 @@
             <div class="user-info">
                 <span id="username-display">Guest</span>
                 <span class="user-count">Users: <span id="user-count">0</span>/2</span>
+                <span class="chat-status" id="chat-status">Waiting...</span>
             </div>
         </div>
 
@@ -32,12 +33,17 @@
         </div>
     </div>
 
-    <!-- Username Modal removed - using fixed usernames Singh/Kaur -->
-
-    <!-- Connection Status -->
     <div id="connection-status" class="status-message" style="display: none;">
         <span id="status-text"></span>
     </div>
+
+    <!-- Copyright Footer -->
+    <footer class="copyright-footer">
+        <div class="copyright-content">
+            <span class="copyright-text">© 2025 Copyright by Sapreet Gujjar</span>
+            <span class="developer-title">Ethical Hacker</span>
+        </div>
+    </footer>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
