@@ -6,7 +6,8 @@ A simple, real-time web chat application built with Node.js, Express, and Socket
 
 - **Real-time messaging** using WebSocket connections
 - **Two-user limit** - only 2 people can chat at once
-- **Username customization** - users can change their display names
+- **Predefined usernames** - users are automatically assigned "Singh" and "Kaur"
+- **Enhanced timestamps** - shows time, date, and full timestamp on hover
 - **Typing indicators** - see when the other person is typing
 - **Connection status** - shows user count and connection state
 - **Responsive design** - works on desktop and mobile devices
@@ -51,9 +52,10 @@ http://localhost:3000
 
 1. **Start the server** using `npm start`
 2. **Open two browser windows/tabs** and navigate to `http://localhost:3000`
-3. **Change usernames** by clicking the "Change Name" button
-4. **Start chatting** - messages appear in real-time
+3. **First user becomes "Singh", second user becomes "Kaur"**
+4. **Start chatting** - messages appear in real-time with timestamps
 5. **See typing indicators** when the other person is typing
+6. **Hover over timestamps** to see full date and time information
 
 ## Technical Details
 

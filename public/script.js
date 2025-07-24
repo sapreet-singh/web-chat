@@ -6,14 +6,11 @@ const chatMessages = document.getElementById('chat-messages');
 const messageInput = document.getElementById('message-input');
 const sendBtn = document.getElementById('send-btn');
 const usernameDisplay = document.getElementById('username-display');
-const changeUsernameBtn = document.getElementById('change-username-btn');
+// const changeUsernameBtn = document.getElementById('change-username-btn'); // Removed - using fixed usernames
 const userCountDisplay = document.getElementById('user-count');
 const typingIndicator = document.getElementById('typing-indicator');
 const typingUser = document.getElementById('typing-user');
-const usernameModal = document.getElementById('username-modal');
-const usernameInput = document.getElementById('username-input');
-const saveUsernameBtn = document.getElementById('save-username-btn');
-const cancelUsernameBtn = document.getElementById('cancel-username-btn');
+// Username modal elements removed - using fixed usernames Singh/Kaur
 const connectionStatus = document.getElementById('connection-status');
 const statusText = document.getElementById('status-text');
 
@@ -24,10 +21,11 @@ let typingTimeout;
 
 // Socket Event Listeners
 socket.on('connected', (data) => {
+    console.log('Connected with data:', data);
     currentUsername = data.username;
     usernameDisplay.textContent = currentUsername;
     addSystemMessage(`Welcome! You are ${currentUsername}`);
-    
+
     if (data.userCount === 1) {
         addSystemMessage('Waiting for another user to join...');
     }
@@ -42,7 +40,7 @@ socket.on('user_count', (count) => {
 });
 
 socket.on('chat_message', (data) => {
-    addMessage(data.username, data.message, data.timestamp, data.username === currentUsername);
+    addMessage(data.username, data.message, data.timestamp, data.username === currentUsername, data.fullTimestamp, data.date);
 });
 
 socket.on('user_typing', (data) => {
@@ -59,9 +57,7 @@ socket.on('user_disconnected', (data) => {
     typingIndicator.style.display = 'none';
 });
 
-socket.on('user_renamed', (data) => {
-    addSystemMessage(`${data.oldUsername} changed their name to ${data.newUsername}`);
-});
+// User rename functionality removed - using fixed usernames Singh/Kaur
 
 socket.on('room_full', (message) => {
     showStatus(message, 'error');
@@ -86,18 +82,9 @@ messageInput.addEventListener('keypress', (e) => {
 
 messageInput.addEventListener('input', handleTyping);
 
-changeUsernameBtn.addEventListener('click', () => {
-    showUsernameModal();
-});
+// Username change functionality removed - using fixed usernames Singh/Kaur
 
-saveUsernameBtn.addEventListener('click', saveUsername);
-cancelUsernameBtn.addEventListener('click', hideUsernameModal);
-
-usernameInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        saveUsername();
-    }
-});
+// Username modal functionality removed - using fixed usernames Singh/Kaur
 
 // Functions
 function sendMessage() {
@@ -115,18 +102,19 @@ function sendMessage() {
     }
 }
 
-function addMessage(username, message, timestamp, isOwn) {
+function addMessage(username, message, timestamp, isOwn, fullTimestamp, date) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isOwn ? 'own' : 'other'}`;
-    
+
     messageDiv.innerHTML = `
         <div class="message-content">${escapeHtml(message)}</div>
         <div class="message-info">
-            <span>${username}</span>
-            <span>${timestamp}</span>
+            <span class="username">${username}</span>
+            <span class="timestamp" title="${fullTimestamp || timestamp}">${timestamp}</span>
+            ${date ? `<span class="date">${date}</span>` : ''}
         </div>
     `;
-    
+
     chatMessages.appendChild(messageDiv);
     scrollToBottom();
 }
@@ -157,27 +145,7 @@ function handleTyping() {
     }, 1000);
 }
 
-function showUsernameModal() {
-    usernameInput.value = currentUsername;
-    usernameModal.style.display = 'flex';
-    usernameInput.focus();
-}
-
-function hideUsernameModal() {
-    usernameModal.style.display = 'none';
-}
-
-function saveUsername() {
-    const newUsername = usernameInput.value.trim();
-    
-    if (newUsername && newUsername !== currentUsername) {
-        currentUsername = newUsername;
-        usernameDisplay.textContent = currentUsername;
-        socket.emit('set_username', newUsername);
-    }
-    
-    hideUsernameModal();
-}
+// Username modal functions removed - using fixed usernames Singh/Kaur
 
 function showStatus(message, type = 'info') {
     statusText.textContent = message;

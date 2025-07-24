@@ -13,6 +13,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Store connected users (max 2 for this chat)
 let connectedUsers = [];
 const MAX_USERS = 2;
+const PREDEFINED_USERNAMES = ['Singh', 'Kaur'];
 
 // Handle socket connections
 io.on('connection', (socket) => {
@@ -25,10 +26,14 @@ io.on('connection', (socket) => {
         return;
     }
 
-    // Add user to connected users
+    // Add user to connected users with predefined names
+    const userIndex = connectedUsers.length; // Get index before adding user
+    const assignedUsername = PREDEFINED_USERNAMES[userIndex];
+    console.log(`Assigning username: ${assignedUsername} to user ${socket.id} (index: ${userIndex})`);
+
     connectedUsers.push({
         id: socket.id,
-        username: `User${connectedUsers.length + 1}`
+        username: assignedUsername
     });
 
     // Notify all users about current user count
@@ -40,27 +45,19 @@ io.on('connection', (socket) => {
         userCount: connectedUsers.length
     });
 
-    // Handle username change
-    socket.on('set_username', (username) => {
-        const user = connectedUsers.find(user => user.id === socket.id);
-        if (user) {
-            const oldUsername = user.username;
-            user.username = username;
-            socket.broadcast.emit('user_renamed', {
-                oldUsername,
-                newUsername: username
-            });
-        }
-    });
+    // Username change functionality removed - using fixed usernames Singh/Kaur
 
     // Handle chat messages
     socket.on('chat_message', (data) => {
         const user = connectedUsers.find(user => user.id === socket.id);
         if (user) {
+            const now = new Date();
             const messageData = {
                 username: user.username,
                 message: data.message,
-                timestamp: new Date().toLocaleTimeString()
+                timestamp: now.toLocaleTimeString(),
+                fullTimestamp: now.toLocaleString(),
+                date: now.toLocaleDateString()
             };
             
             // Broadcast message to all users

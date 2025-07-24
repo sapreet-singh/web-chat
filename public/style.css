@@ -119,6 +119,22 @@ body {
     margin-top: 5px;
     display: flex;
     gap: 10px;
+    align-items: center;
+}
+
+.message-info .username {
+    font-weight: 600;
+    color: #333;
+}
+
+.message-info .timestamp {
+    color: #888;
+    cursor: help;
+}
+
+.message-info .date {
+    color: #999;
+    font-size: 0.7rem;
 }
 
 .system-message {

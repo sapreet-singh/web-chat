@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Two-Person Web Chat</title>
+    <title>Web Chat</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <h1>Two-Person Chat</h1>
+            <h1>Singh & Kaur Chat</h1>
             <div class="user-info">
                 <span id="username-display">Guest</span>
-                <button id="change-username-btn">Change Name</button>
                 <span class="user-count">Users: <span id="user-count">0</span>/2</span>
             </div>
         </div>
@@ -33,17 +32,7 @@
         </div>
     </div>
 
-    <!-- Username Modal -->
-    <div id="username-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3>Enter Your Name</h3>
-            <input type="text" id="username-input" placeholder="Your name..." maxlength="20">
-            <div class="modal-buttons">
-                <button id="save-username-btn">Save</button>
-                <button id="cancel-username-btn">Cancel</button>
-            </div>
-        </div>
-    </div>
+    <!-- Username Modal removed - using fixed usernames Singh/Kaur -->
 
     <!-- Connection Status -->
     <div id="connection-status" class="status-message" style="display: none;">
