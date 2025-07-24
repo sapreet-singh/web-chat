@@ -13,30 +13,54 @@ const typingUser = document.getElementById('typing-user');
 // Username modal elements removed - using fixed usernames Singh/Kaur
 const connectionStatus = document.getElementById('connection-status');
 const statusText = document.getElementById('status-text');
+const connectionIndicator = document.getElementById('connection-indicator');
+const chatStatusDisplay = document.getElementById('chat-status');
 
 // Variables
 let currentUsername = 'Guest';
 let isTyping = false;
 let typingTimeout;
+let messageCount = 0;
+let chatReady = false;
 
 // Socket Event Listeners
 socket.on('connected', (data) => {
-    console.log('Connected with data:', data);
     currentUsername = data.username;
     usernameDisplay.textContent = currentUsername;
     addSystemMessage(`Welcome! You are ${currentUsername}`);
 
+    chatReady = data.chatReady || false;
+    updateChatInterface();
+
     if (data.userCount === 1) {
         addSystemMessage('Waiting for another user to join...');
+        disableChat('Waiting for another user to connect...');
     }
 });
 
 socket.on('user_count', (count) => {
     userCountDisplay.textContent = count;
-    
-    if (count === 2) {
-        addSystemMessage('Chat room is now full. You can start chatting!');
+});
+
+socket.on('chat_status', (status) => {
+    chatReady = status.ready;
+    updateChatInterface();
+
+    if (status.ready) {
+        enableChat();
+    } else {
+        disableChat('Waiting for both users to connect...');
     }
+});
+
+socket.on('chat_ready', (message) => {
+    addSystemMessage(message);
+    enableChat();
+});
+
+socket.on('chat_not_ready', (message) => {
+    addSystemMessage(message);
+    disableChat('Chat disabled. Waiting for another user...');
 });
 
 socket.on('chat_message', (data) => {
@@ -57,9 +81,15 @@ socket.on('user_disconnected', (data) => {
     typingIndicator.style.display = 'none';
 });
 
-// User rename functionality removed - using fixed usernames Singh/Kaur
-
 socket.on('room_full', (message) => {
+    showStatus(message, 'error');
+});
+
+socket.on('duplicate_connection', (message) => {
+    showStatus(message, 'warning');
+});
+
+socket.on('message_error', (message) => {
     showStatus(message, 'error');
 });
 
@@ -89,16 +119,71 @@ messageInput.addEventListener('input', handleTyping);
 // Functions
 function sendMessage() {
     const message = messageInput.value.trim();
-    
+
+    if (!chatReady) {
+        showStatus('Chat is not ready. Both users must be connected to send messages.', 'warning');
+        return;
+    }
+
     if (message) {
-        socket.emit('chat_message', { message });
+        const formattedMessage = formatMessage(message);
+        socket.emit('chat_message', { message: formattedMessage });
         messageInput.value = '';
-        
+        autoResizeTextarea();
+        messageCount++;
+
         // Stop typing indicator
         if (isTyping) {
             isTyping = false;
             socket.emit('typing', false);
         }
+
+        // Add haptic feedback on mobile
+        if (navigator.vibrate) {
+            navigator.vibrate(50);
+        }
+    }
+}
+
+// Chat control functions
+function enableChat() {
+    chatReady = true;
+    messageInput.disabled = false;
+    sendBtn.disabled = false;
+    messageInput.placeholder = 'Type your message...';
+    messageInput.classList.remove('disabled');
+    sendBtn.classList.remove('disabled');
+
+    // Update status display
+    if (chatStatusDisplay) {
+        chatStatusDisplay.textContent = 'Chat Ready';
+        chatStatusDisplay.className = 'chat-status ready';
+    }
+
+    hideStatus();
+}
+
+function disableChat(reason = 'Chat is disabled') {
+    chatReady = false;
+    messageInput.disabled = true;
+    sendBtn.disabled = true;
+    messageInput.placeholder = reason;
+    messageInput.classList.add('disabled');
+    sendBtn.classList.add('disabled');
+    typingIndicator.style.display = 'none';
+
+    // Update status display
+    if (chatStatusDisplay) {
+        chatStatusDisplay.textContent = 'Waiting...';
+        chatStatusDisplay.className = 'chat-status waiting';
+    }
+}
+
+function updateChatInterface() {
+    if (chatReady) {
+        enableChat();
+    } else {
+        disableChat('Waiting for both users to connect...');
     }
 }
 
@@ -133,16 +218,33 @@ function scrollToBottom() {
 }
 
 function handleTyping() {
+    // Only send typing indicator if chat is ready
+    if (!chatReady) return;
+
     if (!isTyping) {
         isTyping = true;
         socket.emit('typing', true);
     }
-    
+
     clearTimeout(typingTimeout);
     typingTimeout = setTimeout(() => {
         isTyping = false;
         socket.emit('typing', false);
     }, 1000);
+}
+
+// Enhanced message formatting
+function formatMessage(text) {
+    // Simple emoji shortcuts
+    return text
+        .replace(/:smile:/g, '😊')
+        .replace(/:heart:/g, '❤️')
+        .replace(/:thumbs_up:/g, '👍')
+        .replace(/:thumbs_down:/g, '👎')
+        .replace(/:laugh:/g, '😂')
+        .replace(/:sad:/g, '😢')
+        .replace(/:wink:/g, '😉')
+        .replace(/:cool:/g, '😎');
 }
 
 // Username modal functions removed - using fixed usernames Singh/Kaur
