@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Person Web Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Two-Person Chat</h1>
+            <div class="user-info">
+                <span id="username-display">Guest</span>
+                <button id="change-username-btn">Change Name</button>
+                <span class="user-count">Users: <span id="user-count">0</span>/2</span>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will appear here -->
+        </div>
+
+        <div class="typing-indicator" id="typing-indicator" style="display: none;">
+            <span id="typing-user"></span> is typing...
+        </div>
+
+        <div class="chat-input-container">
+            <div class="input-group">
+                <input type="text" id="message-input" placeholder="Type your message..." maxlength="500">
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Username Modal -->
+    <div id="username-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Enter Your Name</h3>
+            <input type="text" id="username-input" placeholder="Your name..." maxlength="20">
+            <div class="modal-buttons">
+                <button id="save-username-btn">Save</button>
+                <button id="cancel-username-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div id="connection-status" class="status-message" style="display: none;">
+        <span id="status-text"></span>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
